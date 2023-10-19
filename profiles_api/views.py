@@ -1,21 +1,16 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+from rest_framework import status
+
+from . import serializers
 
 class HelloApiView(APIView):
     """Test API View"""
 
-    """
-        breakdown of get function:
+    # variable
+    serializer_class =  serializers.HelloSerializer
 
-        self = required argument for class based functions
-
-        request = s an object representing the incoming HTTP request.
-        It contains information about the client's request, including the URL, HTTP method, headers, and any data that was sent with the request.
-
-        format = This is an optional parameter that allows you to specify the desired response format.
-        Depending on the request and your view's implementation, you may want to return different response formats, such as HTML, JSON, XML, or others
-    """
     def get(self, request, format=None):
         """Returns a list of APIView features"""
 
@@ -27,6 +22,38 @@ class HelloApiView(APIView):
             'Is mapped manually to URLs',
         ]
 
-        # return statement
         return Response({'message': 'Hello!', 'an_apiview': an_apiview})
-        # key:value, key:value
+            # key:value, key:value
+
+    def post(self, request):
+        """ Create a hello message with our name """
+
+        # variable
+        serializer = self.serializer_class(data=request.data)
+
+        # validate serializers
+        if serializer.is_valid():
+            name = serializer.validated_data.get('name')
+            message = f'Hello {name}'
+
+            return Response({'message':message})
+            #'key':value
+
+        # throw an error if input is invalid
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # Update an Object, pk = primary key
+    def put(self, request, pk=None):
+        """Handle updating an object"""
+        return Response({'method': 'PUT'})
+
+    # Update an Object, Only update fields provided in the request
+    def patch(self, request, pk=None):
+        """Handle partial update of object"""
+        return Response({'method': 'PATCH'})
+
+    # Remove/Delete an object from the database
+    def delete(self, request, pk=None):
+        """Delete an object"""
+        return Response({'method': 'DELETE'})
