@@ -4,6 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework import status
+from rest_framework import filters
+
 
 from . import serializers
 from . import models
@@ -115,5 +117,9 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
     serializer_class = serializers.UserProfileSerializer
     queryset = models.UserProfile.objects.all()
+
     authentication_classes = (TokenAuthentication,) #created as tuple using ,
     permission_classes = (permissions.UpdateOwnProfile,)  #created as tuple using ,
+    
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name', 'email',)
